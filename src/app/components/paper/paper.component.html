@@ -1,0 +1,262 @@
+<div class="intro-y flex items-center mt-8">
+    <h2 class="text-lg font-medium mr-auto">
+        Paper
+    </h2>
+</div>
+<div class="grid grid-cols-12 gap-6 mt-2">
+    <div class="intro-y col-span-12 lg:col-span-12">
+        <!-- BEGIN: Form Layout -->
+
+        <div class="intro-y box p-5">
+            <div>
+                <form #myForm="ngForm">
+                    <div class="p-5" style="padding-left: 0px;padding-right: 0px;">
+                        <div class="preview">
+                            <div class="grid grid-cols-12 gap-2">
+                                <div class="mt-2 col-span-3">
+                                    <label>Class</label>
+                                    <input type="hidden" value="paper.id" />
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="paper.claass" (ngModelChange)="onClassChange($event)" name="claass" required #class="ngModel">
+                                    <option disabled value="undefined">Select Class</option>
+                                    <option *ngFor="let c of classes" [ngValue]="c">{{c.name}}</option>
+                                </select>
+                                    <div *ngIf="class.invalid && (class.dirty || class.touched)" class="text-theme-6 mt-2">Class Name is required</div>
+
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <label>Section</label>
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="paper.section" (ngModelChange)="onSectionChange()" name="section">
+                                    <option disabled value="undefined">Select Section</option>
+                                    <option *ngFor="let s of sections" [ngValue]="s">{{s.name}}</option> 
+                                </select>
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <label>Subject</label>
+                                    <select class="inline input border mt-2 mr-2 w-full" [compareWith]="selectOnId" name="subject" required [(ngModel)]="paper.subject" required #subject="ngModel">
+                                    <option disabled value="undefined">Select Subject</option>
+                                    <option *ngFor="let s of subjects" [ngValue]="s">{{s.name}}</option>
+                                </select>
+                                    <div *ngIf="subject.invalid && (subject.dirty || subject.touched)" class="text-theme-6 mt-2">Subject is required</div>
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <label>Exam Term</label>
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="paper.term" required name="term" #term="ngModel">
+                            <option disabled value="undefined">Select Exam Term</option>
+                            <option *ngFor="let t of terms" [ngValue]="t">{{t.name}}</option> 
+                               </select>
+                                    <div *ngIf="term.invalid && (term.dirty || term.touched)" class="text-theme-6 mt-2">Term is required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200" style="padding-left: 0;">
+                            <h1 class="font-base text-xl mr-auto">
+                                Questions
+                            </h1>
+
+                        </div>
+                        <div class="text-right mt-5">
+                            <h2 class="font-medium text-base mr-auto " style="float: left;">
+                                Total Questions:{{questions.length}}
+                            </h2>
+                            <button type="button" class="button   bg-theme-6 text-white mr-1" (click)="deleteQuestion(questionIndex)" [disabled]="questionIndex <= 0 && questions.length==1">Delete Question</button>
+                            <button type="button" class="button bg-theme-1 text-white" (click)="addQuestion(questionIndex+1)" [disabled]="!modelGroup.valid">Add Question</button>
+                        </div>
+                        <div class="p-5" ngModelGroup="modelGroup" #modelGroup="ngModelGroup" style="padding-left: 0px;padding-right: 0px;">
+                            <div class="preview">
+                                <div class="grid grid-cols-12 gap-2">
+                                    <div class="mt-2 col-span-12">
+                                        <div>
+                                            <label>Question:{{questionIndex+1}}</label>
+                                            <input type="text" class="input w-full border mt-2" [(ngModel)]="question.question" required name="question" placeholder="Input text" #qstn="ngModel">
+                                            <div *ngIf="qstn.invalid && (qstn.dirty || qstn.touched)" class="text-theme-6 mt-2">Question is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 col-span-6">
+                                        <label>Option A</label>
+                                        <input type="text" class="input w-full border mt-2" [(ngModel)]="question.optionA" required placeholder="Input text" name="optionA" #optnA="ngModel">
+                                        <div *ngIf="optnA.invalid && (optnA.dirty || optnA.touched)" class="text-theme-6 mt-2">Option A is required</div>
+                                    </div>
+                                    <div class="mt-2 col-span-6">
+                                        <label>Option B</label>
+                                        <input type="text" class="input w-full border mt-2" [(ngModel)]="question.optionB" required name="optionB" placeholder="Input text" #optionB="ngModel">
+                                        <div *ngIf="optionB.invalid && (optionB.dirty || optionB.touched)" class="text-theme-6 mt-2">Option B is required</div>
+                                    </div>
+                                    <div class="mt-2 col-span-6">
+                                        <label>Option C</label>
+                                        <input type="text" class="input w-full border mt-2" [(ngModel)]="question.optionC" required name="optionC" placeholder="Input text" #optionC="ngModel">
+                                        <div *ngIf="optionC.invalid && (optionC.dirty || optionC.touched)" class="text-theme-6 mt-2">Option C is required</div>
+                                    </div>
+                                    <div class="mt-2 col-span-6">
+                                        <label>Option D</label>
+                                        <input type="text" class="input w-full border mt-2" [(ngModel)]="question.optionD" required name="optionD" placeholder="Input text" #optionD="ngModel">
+                                        <div *ngIf="optionD.invalid && (optionD.dirty || optionD.touched)" class="text-theme-6 mt-2">Option D is required</div>
+                                    </div>
+                                    <div class="mt-3 col-span-12">
+                                        <label>Set Correct Option</label>
+                                        <div class="flex flex-col sm:flex-row mt-2 col-span-12">
+                                            <div class="flex items-center text-gray-700 mr-2 w-full">
+                                                <input type="radio" class="input border mr-2" [(ngModel)]="question.correctAnswer" name="correctAnswer" required #correctAnswer="ngModel" value="optionA">
+                                                <label class="cursor-pointer select-none">{{question.optionA?question.optionA:'Option A'}}</label>
+                                            </div>
+                                            <div class="flex items-center text-gray-700 mr-2 mt-2 sm:mt-0 w-full">
+                                                <input type="radio" class="input border mr-2" [(ngModel)]="question.correctAnswer" name="correctAnswer" required #correctAnswer="ngModel" value="optionB">
+                                                <label class="cursor-pointer select-none">{{question.optionB?question.optionB:'Option B'}}</label>
+                                            </div>
+                                            <div class="flex items-center text-gray-700 mr-2 mt-2 sm:mt-0 w-full">
+                                                <input type="radio" class="input border mr-2" [(ngModel)]="question.correctAnswer" name="correctAnswer" required #correctAnswer="ngModel" value="optionC">
+                                                <label class="cursor-pointer select-none">{{question.optionC?question.optionC:'Option C'}}</label>
+                                            </div>
+                                            <div class="flex items-center text-gray-700 mr-2 mt-2 sm:mt-0 w-full">
+                                                <input type="radio" class="input border mr-2" [(ngModel)]="question.correctAnswer" name="correctAnswer" required #correctAnswer="ngModel" value="optionD">
+                                                <label class="cursor-pointer select-none">{{question.optionD?question.optionD:'Option D'}}</label>
+                                            </div>
+
+                                        </div>
+                                        <div *ngIf="correctAnswer.invalid && (correctAnswer.dirty || correctAnswer.touched)" class="text-theme-6 mt-2">Correct Answer is required</div>
+                                    </div>
+                                </div>
+                                <a (click)="nextQuestion(questionIndex+1)" [class.disabled]="(questionIndex+1)==questions.length" class="float cursor" style="right: 20px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 200 200" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M68.37,28.595l-9.7825,9.7825l47.73,47.6225l-47.73,47.73l9.675,9.675l52.5675,-52.5675l4.945,-4.8375l-4.945,-4.8375z"></path></g></g></svg>
+                                </a>
+                                <a (click)="previousQuestion(questionIndex-1)" [class.disabled]="questionIndex<=0" class="float cursor" style="left:5px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 200 200" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M104.1675,28.595l-52.46,52.5675l-4.8375,4.8375l57.405,57.405l9.675,-9.675l-47.6225,-47.73l47.6225,-47.6225z"></path></g></g></svg>                                    </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right mt-5">
+                        <div style="display: inline;">
+                            <a href="javascript:;" data-toggle="modal" data-target="#myModal" class="button inline-block bg-theme-1 text-white">Check Paper</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="col-span-12 mt-6">
+            <div class="intro-y block sm:flex items-center h-10">
+                <h2 class="text-lg font-medium truncate mr-5">
+                    Paper Table
+                </h2>
+            </div>
+            <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0" style=" width: 100%;">
+                    <div class=" relative text-gray-700">
+                        <input type="text" class="input box pr-10 placeholder-theme-13" placeholder="Search..." style="width: 100%;height: 45px;" [(ngModel)]="searchTxt">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
+                <table class="table table-report sm:mt-2">
+                    <thead>
+                        <tr>
+                            <th class="whitespace-no-wrap">SUBJECT</th>
+                            <th class="whitespace-no-wrap">CLASS</th>
+                            <th class="whitespace-no-wrap">SECTION</th>
+                            <th class="whitespace-no-wrap">EXAM TERM</th>
+                            <th class="text-center whitespace-no-wrap">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="intro-x" *ngFor="let paper of papers |  search:searchTxt">
+
+                            <td (click)="editPaper(paper.id)">
+                                <a class="font-medium whitespace-no-wrap cursor-pointer">{{paper.subject.name}}</a>
+                            </td>
+                            <td (click)="editPaper(paper.id)">
+                                <a class="font-medium whitespace-no-wrap cursor-pointer">{{paper.claass.name}}</a>
+                            </td>
+                            <td (click)="editPaper(paper.id)">
+                                <a class="font-medium whitespace-no-wrap cursor-pointer">{{paper.section.name}}</a>
+                            </td>
+                            <td (click)="editPaper(paper.id)">
+                                <a class="font-medium whitespace-no-wrap cursor-pointer">{{paper.term.name}}</a>
+                            </td>
+
+                            <td class="table-report__action w-56">
+                                <div class="flex justify-center items-center">
+                                    <a class="flex items-center mr-3 cursor-pointer" (click)="editPaper(paper.id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square w-4 h-4 mr-1"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>                                        Edit </a>
+                                    <a class="flex items-center text-theme-6" (click)="deletePaper(paper.id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-4 h-4 mr-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                                        Delete </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single success-toast" style="text-align: left;" *ngIf="successToast == true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single error-toast" style="text-align: left;" *ngIf="errorToast ==true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single" style="text-align: left;" *ngIf="loadingToast ==true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}}
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin-left: 3rem; background: rgb(14, 44, 136); display: inline; shape-rendering: auto;" width="30px" height="30px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                <circle cx="50" cy="50" r="32" stroke-width="8" stroke="#ffffff" stroke-dasharray="50.26548245743669 50.26548245743669" fill="none" stroke-linecap="round">
+                  <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite" keyTimes="0;1" values="0 50 50;360 50 50"></animateTransform>
+                </circle>
+                <circle cx="50" cy="50" r="23" stroke-width="8" stroke="#ffffff" stroke-dasharray="36.12831551628262 36.12831551628262" stroke-dashoffset="36.12831551628262" fill="none" stroke-linecap="round">
+                  <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite" keyTimes="0;1" values="0 50 50;-360 50 50"></animateTransform>
+                </circle>
+                </svg>
+        </div>
+    </div>
+
+    <div class="preview">
+        <div class="modal" id="myModal">
+            <div class="modal__content modal__content--xl p-5 text-center">
+                <div *ngIf="questions.length>0 && questions[0].question else elseblock">
+                    <div class="intro-y flex items-center mt-2 border-b-2 py-4">
+                        <h2 class="text-lg font-medium mr-1">Subject: </h2>
+                        <h1 class="text-base font-medium mr-auto">{{paper.subject.name}}</h1>
+                        <h2 class="text-lg font-medium mr-1">Class: </h2>
+                        <h1 class="text-base font-medium mr-auto">{{paper.claass.name}}</h1>
+                        <h2 class="text-lg font-medium mr-1">Section:</h2>
+                        <h1 class="text-base font-medium mr-auto">{{paper.section.name}}</h1>
+                        <h2 class="text-lg font-medium mr-1">Exam-Term:</h2>
+                        <h1 class="text-base font-medium mr-auto">{{paper.term.name}}</h1>
+                    </div>
+                    <div *ngFor="let question of questions;index as i" class="border-b-2 py-2">
+                        <div class="intro-y flex items-center py-2">
+                            <h2 class="text-base font-medium mr-1">Question: {{i+1}}</h2>
+                            <h1 class="text-base font-medium mr-auto">{{question.question}}</h1>
+                        </div>
+                        <div class="intro-y flex items-center py-2">
+                            <h2 class="text-base font-medium mr-1">A: </h2>
+                            <h1 class="text-base font-medium mr-auto">{{question.optionA}}</h1>
+                            <h2 class="text-base font-medium mr-1">B: </h2>
+                            <h1 class="text-base font-medium mr-auto">{{question.optionB}}</h1>
+                            <h2 class="text-base font-medium mr-1">C:</h2>
+                            <h1 class="text-base font-medium mr-auto">{{question.optionC}}</h1>
+                            <h2 class="text-base font-medium mr-1">D:</h2>
+                            <h1 class="text-base font-medium mr-auto">{{question.optionD}}</h1>
+                        </div>
+                        <div class="intro-y flex items-center py-2">
+                            <h2 class="text-base font-medium mr-1">Correct Answer: </h2>
+                            <h1 class="text-base font-medium mr-auto">{{question[question.correctAnswer]}}</h1>
+                        </div>
+                    </div>
+
+                </div>
+                <ng-template #elseblock>
+                    <div class="p-5 text-center">
+                        <i data-feather="x-circle" class="w-16 h-16 text-theme-12 mx-auto mt-3"></i>
+                        <div class="text-3xl mt-5">Looks like...</div>
+                        <div class="text-gray-600 mt-2">You haven't added any questions to paper yet!</div>
+                    </div>
+                </ng-template>
+                <button type="button" data-dismiss="modal" class="button w-24 bg-theme-1 text-white" [disabled]="!myForm.valid" (click)="onSubmitForm()">Save</button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,6 @@
+.tablediv {
+    overflow: auto;
+    height: 350px;
+    display: flex;
+    padding-right: 5px;
+}

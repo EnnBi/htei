@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@ng-select/ng-select/themes/material.theme.css";
+@import "~ng-pick-datetime/assets/style/picker.min.css";
+select.ng-invalid.ng-touched,
+input.ng-invalid.ng-touched {
+    border-width: 1px;
+    --border-opacity: 1;
+    border-color: rgb(202, 34, 34);
+    border-color: rgba(211, 41, 41, var(--border-opacity));
+}
+
+.bg-theme-1[disabled=""] {
+    background-color: #93abf5;
+}
+
+.bg-theme-6[disabled=""] {
+    background-color: #e2303094;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.success-toast {
+    background: #0e8c46!important;
+}
+
+.error-toast {
+    background: #b51818 !important;
+}
+
+.tablediv::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+.tablediv::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #F5F5F5;
+}
+
+.tablediv::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #2348b6;
+}
+
+.tablediv:hover::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+    background-color: #F5F5F5;
+}

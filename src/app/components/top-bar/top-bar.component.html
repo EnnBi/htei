@@ -1,0 +1,46 @@
+<div class="top-bar">
+
+    <div class="intro-x relative mr-3 col-span-10 w-full">
+        <div class="col-span-12 lg:col-span-10">
+            <div class="intro-y pr-1">
+                <div class="p-2  w-full">
+                    <div class="pos__tabs nav-tabs justify-center flex ">
+                        <a class="flex-1 py-2 rounded-md text-center">{{school?.name}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BEGIN: Account Menu -->
+    <div class="intro-x dropdown w-8 h-8 relative">
+
+        <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden  image-fit zoom-in">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical mx-auto"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+        </div>
+        <div class="dropdown-box mt-10 absolute w-56 top-0 right-0 z-20">
+            <div class="dropdown-box__content box bg-theme-38 text-white">
+
+                <div class="p-2 text-right">
+                    <a *ngFor="let s of schools" (click)="schoolChanged(s)" class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 rounded-md"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user w-4 h-4 mr-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>{{s.name}}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Account Menu -->
+    <div class="intro-x dropdown w-8 h-8 relative">
+        <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in">
+            <img alt="Profile" src="../../../assets/dist/images/profile.jpg">
+        </div>
+        <div class="dropdown-box mt-10 absolute w-56 top-0 right-0 z-20">
+            <div class="dropdown-box__content box bg-theme-38 text-white">
+                <div class="p-2 border-t border-theme-40">
+                    <a (click)="logout()" class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 rounded-md"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-toggle-right w-4 h-4 mr-2"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="16" cy="12" r="3"></circle></svg>                        Logout </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

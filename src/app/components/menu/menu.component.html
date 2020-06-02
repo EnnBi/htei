@@ -1,0 +1,79 @@
+<nav class="side-nav">
+    <a class="intro-x flex items-center pl-5 pt-4">
+        <img alt="Hilltop Educational Institute" class="w-6" src="../assets/dist/images/logo.svg">
+        <span class="hidden xl:block text-white text-lg ml-3"> Hill<span class="font-medium">top</span> </span>
+    </a>
+    <div class="side-nav__devider my-6"></div>
+    <ul>
+        <li>
+            <a routerLinkActive="side-menu--active" class="side-menu" appOpenmenu #ref="openMenuRef">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Class
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down side-menu__sub-icon " [ngClass]="{'transform rotate-180':ref.toggle}"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </a>
+            <ul class="side-menu__sub-open" [ngStyle]="{'display': (ref.toggle ? 'block' : 'none') }">
+                <li>
+                    <a routerLink="/class" class="side-menu">
+                        <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>                            </div>
+                        <div class="side-menu__title"> Add/Edit </div>
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/class/subject-teacher" class="side-menu">
+                        <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity "><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>                            </div>
+                        <div class="side-menu__title">Subjects and Teachers </div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a routerLink="/section" class="side-menu" routerLinkActive="side-menu--active">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Section </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/subject" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Subject </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/teacher" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Teacher </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/student" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Student </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/examterm" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Exam Term </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/examdate" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Exam Date </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/paper" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title"> Paper </div>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/school" class="side-menu" routerLinkActive="side-menu--active" class="side-menu">
+                <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>                    </div>
+                <div class="side-menu__title">School </div>
+            </a>
+        </li>
+    </ul>
+</nav>

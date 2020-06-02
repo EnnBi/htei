@@ -1,0 +1,70 @@
+<div class="intro-y flex items-center mt-8">
+    <h2 class="text-lg font-medium mr-auto">
+        Subject
+    </h2>
+</div>
+<div class="grid grid-cols-12 gap-6 mt-2">
+    <div class="intro-y col-span-12 lg:col-span-12">
+        <!-- BEGIN: Form Layout -->
+        <div class="intro-y box p-5">
+            <form #myForm="ngForm" (ngSubmit)="onSubmitForm()">
+                <div>
+                    <label>Subject Name</label>
+                    <input type="hidden" name="id" [(ngModel)]="subject.id" />
+                    <input type=" text " class="input w-full border mt-2 " name="name" required placeholder="Input text " [(ngModel)]="subject.name " #name="ngModel">
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-theme-6 mt-2">Subject Name is required</div>
+                </div>
+                <div class="text-right mt-5 ">
+                    <button type="button" class="button w-24 border text-gray-700 mr-1 " (click)="resetForm()">Cancel</button>
+                    <button type="submit" class="button w-24 bg-theme-1 text-white " [disabled]="!myForm.valid">{{edit==true?'Update':'Save'}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-span-12 mt-6">
+        <div class="intro-y block sm:flex items-center h-10">
+            <h2 class="text-lg font-medium truncate mr-5">
+                Subject Table
+            </h2>
+        </div>
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0" style=" width: 100%;">
+                <div class=" relative text-gray-700">
+                    <input type="text" class="input box pr-10 placeholder-theme-13" placeholder="Search..." style="width: 100%;height: 45px;" [(ngModel)]="searchTxt">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
+        </div>
+        <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0 tablediv">
+            <table class="table table-report sm:mt-2">
+                <thead>
+                    <tr>
+                        <th class="whitespace-no-wrap">NAME</th>
+                        <th class="text-center whitespace-no-wrap">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="intro-x" *ngFor="let subject of subjects | search:searchTxt">
+
+                        <td>
+                            <a class="font-medium whitespace-no-wrap cursor" (click)="fetchOne(subject.id)">{{subject.name}}</a>
+                        </td>
+
+                        <td class="table-report__action w-56">
+                            <div class="flex justify-center items-center">
+                                <a class="flex items-center mr-3 cursor" (click)="fetchOne(subject.id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square w-4 h-4 mr-1"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>                                    Edit </a>
+                                <a class="flex items-center text-theme-6 cursor" (click)="deleteOne(subject.id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-4 h-4 mr-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                                    Delete </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="jq-toast-wrap bottom-right">
+            <div class="jq-toast-single success-toast" style="text-align: left;" *ngIf="successToast == true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+        </div>
+        <div class="jq-toast-wrap bottom-right">
+            <div class="jq-toast-single error-toast" style="text-align: left;" *ngIf="failureToast ==true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+        </div>
+    </div>

@@ -1,0 +1,94 @@
+<div class="intro-y flex items-center mt-8">
+    <h2 class="text-lg font-medium mr-auto">
+        Class
+    </h2>
+</div>
+<div class="grid grid-cols-12 gap-6 mt-2">
+    <div class="intro-y col-span-12 lg:col-span-12">
+
+        <form #myForm="ngForm" (ngSubmit)="onSubmitForm()">
+
+            <div class="intro-y box p-5">
+                <div class="preview">
+                    <div class="grid grid-cols-12 gap-2">
+                        <div class="mt-2 col-span-4">
+                            <label>Class Name</label>
+                            <select class="inline input border mr-2 mt-2 w-full" [(ngModel)]="claass.id" (ngModelChange)="onClassChange($event)" name="class" #class="ngModel">
+                                <option disabled value="undefined">Select Class</option>
+                                <option *ngFor="let c of classes" [value]="c.id">{{c.name}}</option>
+                            </select>
+                            <div *ngIf="class.invalid && (class.dirty || class.touched)" class="text-theme-6 mt-2">Class Name is required</div>
+                        </div>
+                        <div class="mt-2 col-span-4">
+                            <label>Section</label>
+                            <select class="inline input border mr-2 mt-2 w-full" [(ngModel)]="seection.id" (ngModelChange)="onSectionChange($event)" name="section" #section="ngModel">
+                                <option disabled value="undefined">Select Section</option>
+                                <option *ngFor="let s of sections" [value]="s.id">{{s.name}}</option> 
+                            </select>
+                            <div *ngIf="section.invalid && (section.dirty || section.touched)" class="text-theme-6 mt-2">Section is required</div>
+                        </div>
+                        <div class="text-right col-span-4" style="padding-top: 2.25rem;">
+                            <button type="button" class="button  w-full mr-1 bg-theme-1 text-white" (click)="addSubjectTeacher()" [disabled]="!this.seection.id">Add Subjects and Teachers</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200">
+                <h2 class="font-medium text-base mr-auto">
+                    Subjects and Teachers Added
+                </h2>
+
+            </div>
+            <div class="p-5" style="padding-left: 0px;padding-right: 0px;" *ngIf="csts.length>0 else elseblock">
+                <div class="preview">
+                    <div class="grid grid-cols-12 gap-2" *ngFor="let cst of csts let cstIndex = index">
+                        <div class="mt-2 col-span-5">
+                            <input type="hidden" name="cstid" [(ngModel)]="csts[cstIndex].id" />
+                            <select class="inline input border mr-2 w-full" name="subject({{cstIndex}})" required [(ngModel)]="csts[cstIndex].subject.id" #subject="ngModel">
+                                    <option disabled value="undefined">Select Subject</option>
+                                    <option *ngFor="let s of subjects" [disabled]="alreadySelected(s.id)" [value]="s.id" [selected]="csts[cstIndex].subject.id == s.id ? 'selected' : ''"  >{{s.name}}</option>
+                                </select>
+                            <div *ngIf="subject.invalid && (subject.dirty || subject.touched)" class="text-theme-6 mt-2">Subject is required</div>
+                        </div>
+                        <div class="mt-2 col-span-5">
+                            <select class="inline input border mr-2 w-full" name="teacher({{cstIndex}})" [(ngModel)]="csts[cstIndex].teacher.id" required #teacher="ngModel">
+                                <option disabled value="undefined">Select Teacher</option>
+                                <option *ngFor="let t of teachers" [value]="t.id" [selected]="csts[cstIndex].teacher.id == t.id ? 'selected' : ''">{{t.firstName}} {{t.lastName}}</option>
+                            </select>
+                            <div *ngIf="teacher.invalid && (teacher.dirty || teacher.touched)" class="text-theme-6 mt-2">Teacher is required</div>
+
+                        </div>
+
+                        <div class="mt-2 col-span-2 flex justify-center items-center">
+
+                            <a class="flex items-center text-theme-6 cursor" (click)="deleteSubjectTeacher(cstIndex,csts[cstIndex].id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-4 h-4 mr-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                                Delete </a>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="text-right mt-5 ">
+                    <button type="button " class="button w-24 border text-gray-700 mr-1 " (click)="resetForm()">Cancel</button>
+                    <button type="submit" class="button w-24 bg-theme-1 text-white " [disabled]="!myForm.valid">Save</button>
+                    <!-- {{edit==true?'Update':'Save'}} -->
+                </div>
+            </div>
+            <ng-template #elseblock>
+                <div class="p-5 border flex justify-center items-center" style="width: 100%;height:150px;background-color: #f0f0f054;">
+                    <div class="text-gray-500 flex">{{info == true?'You haven\'t added any subjects and teacher to this class.':'Please select class and section'}}</div>
+
+                </div>
+            </ng-template>
+
+        </form>
+    </div>
+
+
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single success-toast" style="text-align: left;" *ngIf="successToast == true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single error-toast" style="text-align: left;" *ngIf="failureToast ==true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
+</div>

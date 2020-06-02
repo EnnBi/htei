@@ -1,0 +1,103 @@
+<div class="intro-y flex items-center mt-8">
+    <h2 class="text-lg font-medium mr-auto">
+        Exam Date
+    </h2>
+</div>
+<div class="grid grid-cols-12 gap-6 mt-2">
+    <div class="intro-y col-span-12 lg:col-span-12">
+        <!-- BEGIN: Form Layout -->
+        <div class="intro-y box p-5">
+            <form #myForm="ngForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <div class="p-5" style="padding-left: 0px;padding-right: 0px;">
+                        <div class="preview">
+                            <div class="grid grid-cols-12 gap-2">
+                                <div class="mt-2 col-span-3">
+                                    <label>Class</label>
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="claass" (ngModelChange)="onClassChange($event)" name="class" #class="ngModel">
+                                    <option  value="undefined">Select Class</option>
+                                    <option *ngFor="let c of classes" [ngValue]="c">{{c.name}}</option>
+                                </select>
+                                    <div *ngIf="class.invalid && (class.dirty || class.touched)" class="text-theme-6 mt-2">Class Name is required</div>
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <label>Section</label>
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="section" (ngModelChange)="onSectionChange()" name="section">
+                                    <option value="undefined">Select Section</option>
+                                    <option *ngFor="let s of sections" [ngValue]="s">{{s.name}}</option> 
+                                </select>
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <label>Exam Term</label>
+                                    <select class="inline input border mr-2 mt-2 w-full" [compareWith]="selectOnId" [(ngModel)]="examTerm" (ngModelChange)="onTermChange()" required name="term" #term="ngModel">
+                                    <option  value="undefined">Select Exam Term</option>
+                                    <option *ngFor="let t of terms" [ngValue]="t">{{t.name}}</option> 
+                                </select>
+                                    <div *ngIf="term.invalid && (term.dirty || term.touched)" class="text-theme-6 mt-2">Term is required</div>
+                                </div>
+                                <div class="text-right col-span-3  mt-2" style="padding-top: 1.75rem;">
+                                    <button type="button" class="button w-full mr-1 bg-theme-1 text-white" (click)="addExamDate()">Add Exam Date</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200">
+                        <h2 class="font-medium text-base mr-auto">
+                            Exam-Dates Added
+                        </h2>
+
+                    </div>
+                    <div class="p-5" style="padding-left: 0px;padding-right: 0px;" *ngIf="examDates?.length>0; else elseblock">
+                        <div class="preview">
+                            <div class="grid grid-cols-12 gap-2" *ngFor="let examDate of examDates;index as i">
+                                <div class="mt-2 col-span-3">
+                                    <input type="hidden" value="examDates[i].id" />
+                                    <select class="inline input border mr-2 w-full" [compareWith]="selectOnId" [(ngModel)]="examDates[i].paper" name="paper({{i}})" required #paper="ngModel">
+                                    <option disabled value="undefined">Select Paper</option>
+                                    <option *ngFor="let p of papers" [disabled]="alreadySelected(p.id)" [ngValue]="p">{{p.subject_Name}}</option>
+                                    </select>
+                                    <div *ngIf="paper.invalid && (paper.dirty || paper.touched)" class="text-theme-6 mt-2">Paper is required</div>
+
+                                </div>
+                                <div class="mt-2 col-span-3">
+                                    <input class="inline datepicker input border mr-2 w-full" type="date" [(ngModel)]="examDates[i].date" name="date({{i}})" placeholder="Exam Date" required #date="ngModel" />
+                                    <div *ngIf="date.invalid && (date.dirty || date.touched)" class="text-theme-6 mt-2">Exam Date is required</div>
+                                </div>
+                                <div class="mt-2 col-span-2">
+                                    <input class="inline datepicker input border mr-2 w-full" type="time" [(ngModel)]="examDates[i].startTime" name="startTime({{i}})" placeholder="Start Date" required #startTime="ngModel" />
+                                    <div *ngIf="startTime.invalid && (startTime.dirty || startTime.touched)" class="text-theme-6 mt-2">Start Time is required</div>
+
+                                </div>
+                                <div class="mt-2 col-span-2">
+                                    <input class="inline datepicker input border mr-2 w-full" type="time" [(ngModel)]="examDates[i].endTime" name="endTime({{i}})" placeholder="End Date" required #endTime="ngModel" />
+                                    <div *ngIf="endTime.invalid && (endTime.dirty || endTime.touched)" class="text-theme-6 mt-2">End Time is required</div>
+                                </div>
+                                <div class="mt-2 col-span-2 flex justify-center items-center">
+                                    <a class="flex items-center text-theme-6 cursor" (click)="onDelete(i,examDates[i].id)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 w-4 h-4 mr-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                                        Delete </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-template #elseblock>
+                        <div class="p-5 border flex justify-center items-center" style="width: 100%;height:150px;background-color: #f0f0f054;">
+                            <div class="text-gray-500 flex">You haven't added any exam dates yet.</div>
+
+                        </div>
+                    </ng-template>
+                </div>
+
+                <div class="text-right mt-5">
+                    <button type="button" class="button w-24 border text-gray-700 mr-1">Cancel</button>
+                    <button type="submit" class="button w-24 bg-theme-1 text-white" [disabled]="!myForm.valid">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single success-toast" style="text-align: left;" *ngIf="successToast == true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
+    <div class="jq-toast-wrap bottom-right">
+        <div class="jq-toast-single error-toast" style="text-align: left;" *ngIf="errorToast ==true"><span class="jq-toast-loader"></span><span class="close-jq-toast-single" (click)="closeToast()">×</span> {{toastMessage}} </div>
+    </div>
