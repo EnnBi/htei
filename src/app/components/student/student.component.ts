@@ -33,6 +33,7 @@ export class StudentComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
   constructor(private studentService:StudentService,private classService:ClassService,
@@ -41,15 +42,18 @@ export class StudentComponent implements OnInit {
   initData(){
     this.student.claass = new Class();
     this.student.section=new Section();
-  
+    this.showLoadingToast('Loading');
     this.studentService.fetchAll().subscribe((data:any)=>{
       this.students = data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.classService.fetchAll().subscribe((data:Class[])=>{
-      console.log(data)
       this.classes=data;
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
-    console.log(this.classes)
   }
 
   ngOnInit(): void {
@@ -57,24 +61,24 @@ export class StudentComponent implements OnInit {
       this.initData();
 
     })
-    this.initData();
   }
 
   onSubmitForm(){
     this.closeToast();
+    this.showLoadingToast('Saving Student');
     this.studentService.save(this.student).subscribe(response=>{
       if(this.edit){
         if(response.status ==200){
           var i = this.students.findIndex(x=>x.id==response.body['id']);
           this.students[i] = <Student>response.body;
           this.edit=false;
-          this.showToast('Student updated',true);
+          this.showSuccessToast('Student updated');
           this.myForm.reset();
 
         }else if(response.status==208){
-          this.showToast('Student already exists',false);
+          this.showErrorToast('Student already exists');
         }else{
-          this.showToast('Something went wrong.Please try again.',false);
+          this.showErrorToast('Something went wrong.Please try again.');
         }
         
       }
@@ -82,13 +86,13 @@ export class StudentComponent implements OnInit {
         {
           if(response.status==200){
             this.students.unshift(<Student>response.body);
-            this.showToast('Student added',true);
+            this.showSuccessToast('Student added');
             this.myForm.reset();
 
           }else if(response.status==208){
-            this.showToast('Student already exists',false);
+            this.showErrorToast('Student already exists');
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
           
         }
@@ -96,21 +100,34 @@ export class StudentComponent implements OnInit {
   }
 
   onClassChange(data){
+    if(!data)
+      return null;
+    
+    this.showLoadingToast('Loading Sections')
+    this.sections=[]
     this.sectionService.fetchSectionOnClassId(data).subscribe((data:any)=>{
       this.sections=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Error in loading sections');
     });
   }
 
   fetchOne(id){
+    this.showLoadingToast('Loading')
     this.student = this.students.find(o=> o.id== +id);
     this.sectionService.fetchSectionOnClassId(this.student.claass.id).subscribe((data:any)=>{
       this.sections=data;
+      this.edit=true;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Error in loading student');
     });
-    this.edit=true;
   }
 
   deleteOne(id){
     this.closeToast();
+    this.showLoadingToast('Deleting Student')
     if(this.edit){
       this.myForm.reset();
       this.edit=false;
@@ -118,34 +135,46 @@ export class StudentComponent implements OnInit {
     this.studentService.deleteOne(id).subscribe((res:any)=>{
       if(res.status == 200){
         this.students = this.students.filter(i=>i.id !== id);
-        this.showToast('Student deleted',true)
+        this.showSuccessToast('Student deleted')
       }
        else if(res.status==409){
-            this.showToast('Student cannot be deleted',false);
+            this.showErrorToast('Student cannot be deleted');
        }else{
-         this.showToast('Something went wrong.Please try again.',false);
+         this.showErrorToast('Something went wrong.Please try again.');
        }
     });
   } 
+
+  selectOnId(item1,item2){
+    return item1.id == item2.id;
+  }
 
   resetForm(){
     this.myForm.reset();
     this.edit=false;
   }
 
-  showToast(message,val){
-        if(val) 
-          this.successToast=true;
-        else
-          this.failureToast=true;
-
-        console.log(this.toastMessage);
-        this.toastMessage=message;
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
   }
-
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
     this.successToast=false;
     this.failureToast=false;
+    this.loadingToast=false;
   }
-
 }

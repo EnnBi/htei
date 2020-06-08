@@ -33,22 +33,32 @@ export class TeacherComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
   constructor(private teacherService:TeacherService,private schoolService:SchoolService,
               private sharedService:SharedService) { }
 
   initData(){
+    this.myForm?.reset()
+    this.showLoadingToast('Loading');
     this.teacher.school=new School();
     this.teacherService.fetchAll().subscribe((data:any)=>{
       this.teachers = data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.schoolService.fetchAll().subscribe((data:School[])=>{
       this.schools=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
   ngOnInit(): void {
+    this.currentSchool=this.sharedService.getSchool();
     this.sharedService.school.subscribe((data:any)=>{
       this.currentSchool=data;
       this.initData();
@@ -58,37 +68,38 @@ export class TeacherComponent implements OnInit {
 
   onSubmitForm(){
     this.closeToast();
+    this.showLoadingToast('Saving Teacher');
     this.teacherService.save(this.teacher).subscribe(response=>{
       if(this.edit){
         if(response.status ==200){
-          if(this.currentSchool.id == response.body['id']){
+          if(this.currentSchool.id == response.body['school'].id){
             var i = this.teachers.findIndex(x=>x.id==response.body['id']);
             this.teachers[i] = <Teacher>response.body;
           }
           this.edit=false;
-          this.showToast('Teacher updated',true);
+          this.showSuccessToast('Teacher updated');
           this.myForm.reset();
 
         }else if(response.status==208){
-          this.showToast('Teacher already exists',false);
+          this.showErrorToast('Teacher already exists');
         }else{
-          this.showToast('Something went wrong.Please try again.',false);
+          this.showErrorToast('Something went wrong.Please try again.');
         }
         
       }
       else
         {
           if(response.status==200){
-            if(this.currentSchool.id == response.body['id']){
+            if(this.currentSchool.id == response.body['school'].id){
               this.teachers.unshift(<Teacher>response.body);
            }
-            this.showToast('Teacher added',true);
+            this.showSuccessToast('Teacher added');
             this.myForm.reset();
 
           }else if(response.status==208){
-            this.showToast('Teacher already exists',false);
+            this.showErrorToast('Teacher already exists');
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
           
         }
@@ -102,6 +113,7 @@ export class TeacherComponent implements OnInit {
 
   deleteOne(id){
     this.closeToast();
+    this.showLoadingToast('Deleting Teacher')
     if(this.edit){
       this.myForm.reset();
       this.edit=false;
@@ -109,12 +121,12 @@ export class TeacherComponent implements OnInit {
     this.teacherService.deleteOne(id).subscribe((res:any)=>{
       if(res.status == 200){
         this.teachers = this.teachers.filter(i=>i.id !== id);
-        this.showToast('Teacher deleted',true)
+        this.showSuccessToast('Teacher deleted')
       }
        else if(res.status==409){
-            this.showToast('Teacher cannot be deleted',false);
+            this.showErrorToast('Teacher cannot be deleted');
        }else{
-         this.showToast('Something went wrong.Please try again.',false);
+         this.showErrorToast('Something went wrong.Please try again.');
        }
     });
   } 
@@ -124,18 +136,28 @@ export class TeacherComponent implements OnInit {
     this.edit=false;
   }
 
-  showToast(message,val){
-        if(val) 
-          this.successToast=true;
-        else
-          this.failureToast=true;
-
-        this.toastMessage=message;
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
   }
-
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
     this.successToast=false;
     this.failureToast=false;
+    this.loadingToast=false;
   }
 
 }

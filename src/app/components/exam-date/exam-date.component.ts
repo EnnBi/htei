@@ -57,90 +57,141 @@ export class ExamDateComponent implements OnInit {
     this.sharedService.school.subscribe((data:any)=>{
       this.initData();
     });
-    this.initData();
   }
 
   initData(){
     this.claass=new Class();
     this.section=new Section();
     this.examDates=[];
-    this.classService.fetchClassesOfSchool().subscribe((data:any)=>{
+    this.showLoadingToast('Loading')
+
+    this.classService.fetchAll().subscribe((data:any)=>{
         this.classes = data;
+        this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
+
     this.examTermService.fetchAll().subscribe((data:any)=>{
       this.terms=data;
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
 
   }
 
   onSubmit(){
-    console.log(this.examDates);
+    this.showLoadingToast('Saving Exam Dates');
     this.examDateService.save(this.examDates).subscribe((response:any)=>{
         if(response.status==200){
-            this.showToast("Exam Dates Saved",true);
+            this.showSuccessToast("Exam Dates Saved");
             this.myForm.reset();
             this.examDates = [];
         }
     },(err:HttpErrorResponse)=>{
-      this.showToast('Something went wrong,Please try again',false);
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
   onClassChange(claass){
-      this.sections = claass.sections;
+    
+    if(!this.claass)
+      return null;
+    
+    this.showLoadingToast('Loading...')
+    this.sectionService.fetchSectionOnClassId(this.claass.id).subscribe((data:any)=>{
+      this.sections=data;
+      this.closeToast();
+    },(err:HttpErrorResponse)=>{
+      this.showErrorToast('Something went wrong,Please try again');
+    });
+    
+    
       if(this.claass && this.examTerm){
+        this.showLoadingToast('Loading...')
         if(!this.section.id)
             this.section= <any>{id:0}
+        
         this.paperService.fetchPapersOfClassSectionTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
           this.papers=data;
+          this.closeToast();
+        },(err:HttpErrorResponse)=>{
+          this.showErrorToast('Something went wrong,Please try again');
         });
+
         this.examDateService.fetchOnClassAndSectionAndTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
           this.examDates=data;
+          this.closeToast();
+        },(err:HttpErrorResponse)=>{
+          this.showErrorToast('Something went wrong,Please try again');
         });
       }
+
+      
   }
 
   onSectionChange(){
     if(this.claass && this.examTerm){
+      this.showLoadingToast('Loading...')
+
       if(!this.section.id)
             this.section= <any>{id:0}
         this.paperService.fetchPapersOfClassSectionTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
           this.papers=data;
+          this.closeToast();
+        },(err:HttpErrorResponse)=>{
+          this.showErrorToast('Something went wrong,Please try again');
         });
         this.examDateService.fetchOnClassAndSectionAndTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
           this.examDates=data;
+          this.closeToast();
+        },(err:HttpErrorResponse)=>{
+          this.showErrorToast('Something went wrong,Please try again');
         });
     }
   }
   
   onTermChange(){
     if(this.claass && this.examTerm){
+      this.showLoadingToast('Loading')
         if(!this.section.id)
             this.section= <any>{id:0}
 
 
           this.paperService.fetchPapersOfClassSectionTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
             this.papers=data;
+            this.closeToast();
+            console.log(this.papers)
+          },(err:HttpErrorResponse)=>{
+            this.showErrorToast('Something went wrong,Please try again');
           });
           this.examDateService.fetchOnClassAndSectionAndTerm(this.claass.id,this.section.id,this.examTerm.id).subscribe((data:any)=>{
             this.examDates=data;
+            this.closeToast();
+
+          },(err:HttpErrorResponse)=>{
+            this.showErrorToast('Something went wrong,Please try again');
           });
       }
-      console.log(this.examDates);
+      console.log(this.examDates)
     }
 
     onDelete(index,id){
+      this.showLoadingToast('Deleting Exam Date');
           if(+id>0){
             this.examDateService.deleteOne(id).subscribe((response:any)=>{
-                  if(response.status == 200)  
-                      this.examDates.splice(+index,1);
+                  if(response.status == 200) {
+                    this.examDates.splice(+index,1);
+                    this.closeToast();
+                  } 
                   else 
-                      this.showToast('Exam Date cannot be delete',false)
+                      this.showErrorToast('Exam Date cannot be delete')
             },(err:HttpErrorResponse)=>{
-              this.showToast('Something went wrong,Please try again',false);
+              this.showErrorToast('Something went wrong,Please try again');
             });
           }else{
             this.examDates.splice(+index,1);
+            this.closeToast();
           }
     }
 
@@ -161,19 +212,28 @@ export class ExamDateComponent implements OnInit {
     const ids = this.examDates?.map(ed => +ed.paper?.id);
     return ids.includes(+id);
   }  
-  
-  showToast(message,val){
-        if(val)
-          this.successToast=true;
-        else
-          this.errorToast=true;
-  
-        this.toastMessage=message;
-  
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
   }
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.errorToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
     this.successToast=false;
     this.errorToast=false;
+    this.loadingToast=false;
   }
   
 }

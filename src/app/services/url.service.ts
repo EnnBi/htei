@@ -7,7 +7,8 @@ export class UrlService {
 
   constructor() { }
 
-   IP:string = "http://localhost:8081";
+   //IP:string = "http://localhost:8081";
+   IP:string="https://webhtei.herokuapp.com";
    AUTHENTICATE=this.IP+"/authenticate"
    CLASSES=this.IP+"/class/";
    CLASS_DELETE=this.CLASSES+"delete/";

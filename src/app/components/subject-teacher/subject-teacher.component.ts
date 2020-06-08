@@ -37,6 +37,7 @@ export class SubjectTeacherComponent implements OnInit {
   info:boolean;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
   cst:ClassSubjectTeacher;  
@@ -49,12 +50,16 @@ export class SubjectTeacherComponent implements OnInit {
             
 
   initData(){
+    this.showLoadingToast('Loading....')
     this.info=false
     this.claass={id:0,name:'',sections:[],classSubjectTeachers:[]};
     this.seection={id:0,name:''};
      this.csts=[];
     this.classService.fetchAll().subscribe((data:any)=>{
       this.classes=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
@@ -62,43 +67,56 @@ export class SubjectTeacherComponent implements OnInit {
      this.sharedService.school.subscribe((data:any)=>{
        this.initData();
      });
-     this.initData();
 
   }
   onSubmitForm(){
-    this.closeToast()
+    this.showLoadingToast('Assigning subjects and teachers to class')
     this.cstService.save(this.csts).subscribe(response=>{
           if(response.status==200){
-            this.showToast('Subjects and Teachers added',true);
+            this.showSuccessToast('Subjects and Teachers added');
+            this.csts=[];
             this.myForm.reset();
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
     });
       
   }
   onClassChange(data){
+    if(!data)
+      return null;
     this.info=false;
     this.csts=[];
     this.seection= new Section();
+    this.sections=[];
     this.sectionService.fetchSectionOnClassId(data).subscribe((data:any)=>{
       this.sections=data;
     });
   }
   
   onSectionChange(data){
-
+    if(!data)
+      return null;
     this.info=true;
-    console.log(this.info);
+    this.showLoadingToast('Loading Subjects and Teachers')
     this.csts = [];
     this.subjectService.fetchAll().subscribe((data:Subject[])=>{
       this.subjects=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.teacherService.fetchAll().subscribe((data:Teacher[])=>{
       this.teachers=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.cstService.fetchonClassAndSection(this.claass.id,this.seection.id).subscribe((data:ClassSubjectTeacher[])=>{
       this.csts = data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
@@ -114,17 +132,20 @@ export class SubjectTeacherComponent implements OnInit {
   }
 
   deleteSubjectTeacher(index,id){
+    this.showLoadingToast('Deleting')
     if(+id>0){
         this.cstService.deleteOne(id).subscribe((response:any)=>{
               if(response.status == 200){
                 this.csts.splice(+index,1);
+                this.closeToast();
               }
               else{
-                this.showToast('Subject Teacher cannot be deleted',false);
+                this.showErrorToast('Subject Teacher cannot be deleted');
               }
         });
       }else{
         this.csts.splice(+index,1);
+        this.closeToast();
       }
   }
 
@@ -137,17 +158,27 @@ export class SubjectTeacherComponent implements OnInit {
       this.myForm.reset();
   }
 
-  showToast(message,val){
-        if(val) 
-          this.successToast=true;
-        else
-          this.failureToast=true;
-  
-        this.toastMessage=message;
-  }
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
+}
 
-  closeToast(){
-    this.successToast=false;
-    this.failureToast=false;
+showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+}
+
+  showLoadingToast(message){
+    this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
   }
+  
+    closeToast(){
+      this.successToast=false;
+      this.failureToast=false;
+      this.loadingToast=false;
+    }
 }

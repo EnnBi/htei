@@ -10,7 +10,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { School } from '../school/school.component';
 import { ClassSubjectTeacher } from '../subject-teacher/subject-teacher.component';
 
-
+import { of } from 'rxjs';
 
 export class Class{
   id?:number;
@@ -42,48 +42,55 @@ export class ClassComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
   constructor(private classService:ClassService,private sectionService:SectionService,
               private sharedService:SharedService) { }
 
   initData(){
+    this.showLoadingToast('Loading.Please wait')
+    this.class=this.initialize();
+    this.myForm?.reset()
     this.classService.fetchAll().subscribe((data:any)=>{
-      this.classes = data;
+      this.classes= data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.sectionService.fetchAllSections().subscribe((data:Section[])=>{
       this.sections=data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
   
   ngOnInit(): void {
     this.class=this.initialize();
     this.sharedService.school.subscribe((data:School)=>{
-      this.class=this.initialize();
-      this.myForm.reset()
         this.initData();
-    });
-  }
+    });  
+  } 
 
  
 
   onSubmitForm(){
-    console.log(this.class);
-    this.closeToast();
+    this.showLoadingToast('Saving Class');
     this.classService.save(this.class).subscribe(response=>{
       if(this.edit){
         if(response.status ==200){
           var i = this.classes.findIndex(x=>x.id==response.body['id']);
           this.classes[i] = <Class>response.body;
           this.edit=false;
-          this.showToast('Class updated',true);
+          this.showSuccessToast('Class updated');
           this.myForm.reset();
           this.class.classSubjectTeachers=[]
 
         }else if(response.status==208){
-          this.showToast('Class already exists',false);
+          this.showErrorToast('Class already exists');
         }else{
-          this.showToast('Something went wrong.Please try again.',false);
+          this.showErrorToast('Something went wrong.Please try again.');
         }
         
       }
@@ -91,13 +98,13 @@ export class ClassComponent implements OnInit {
         {
           if(response.status==200){
             this.classes.unshift(<Class>response.body);
-            this.showToast('Class added',true);
+            this.showSuccessToast('Class added');
             this.myForm.reset();
             this.class.classSubjectTeachers=[]
           }else if(response.status==208){
-            this.showToast('Class already exists',false);
+            this.showErrorToast('Class already exists');
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
           
         }
@@ -118,12 +125,12 @@ export class ClassComponent implements OnInit {
     this.classService.deleteOne(id).subscribe((res:any)=>{
       if(res.status == 200){
         this.classes = this.classes.filter(i=>i.id !== id);
-        this.showToast('Class deleted',true)
+        this.showSuccessToast('Class deleted')
       }
        else if(res.status==409){
-            this.showToast('Class cannot be deleted',false);
+            this.showErrorToast('Class cannot be deleted');
        }else{
-         this.showToast('Something went wrong.Please try again.',false);
+         this.showErrorToast('Something went wrong.Please try again.');
        }
     });
   } 
@@ -136,19 +143,28 @@ export class ClassComponent implements OnInit {
     this.myForm.reset();
     this.edit=false;
   }
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
+}
 
-  showToast(message,val){
-        if(val) 
-          this.successToast=true;
-        else
-          this.failureToast=true;
+showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+}
 
-        this.toastMessage=message;
-  }
+showLoadingToast(message){
+  this.closeToast()
+this.loadingToast=true;
+this.toastMessage=message;
+}
 
   closeToast(){
     this.successToast=false;
     this.failureToast=false;
+    this.loadingToast=false;
   }
 
   initialize(){

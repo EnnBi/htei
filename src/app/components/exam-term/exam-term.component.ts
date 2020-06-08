@@ -24,6 +24,7 @@ export class ExamTermComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
 
@@ -31,43 +32,45 @@ export class ExamTermComponent implements OnInit {
     this.sharedService.school.subscribe((data:any)=>{
         this.initData();
     });
-    this.initData();
   }
 
   initData(){
+    this.showLoadingToast('Loading')
     this.examTermService.fetchAll().subscribe((data:ExamTerm[])=>{
       this.examTerms= data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
   onSubmitForm(){
-    this.closeToast();
+    this.showLoadingToast('Saving Exam Term');
     this.examTermService.save(this.examTerm).subscribe(response=>{
       if(this.edit){
         if(response.status ==200){
           var i = this.examTerms.findIndex(x=>x.id==response.body['id']);
           this.examTerms[i] = <ExamTerm>response.body;
           this.edit=false;
-          this.showToast('ExamTerm updated',true);
+          this.showSuccessToast('ExamTerm updated');
           this.myForm.reset();
-
         }else if(response.status==208){
-          this.showToast('ExamTerm already exists',false);
+          this.showErrorToast('ExamTerm already exists');
         }else{
-          this.showToast('Something went wrong.Please try again.',false);
+          this.showErrorToast('Something went wrong.Please try again.');
         }
       } 
       else
         {
           if(response.status==200){
             this.examTerms.unshift(<ExamTerm>response.body);
-            this.showToast('ExamTerm added',true);
+            this.showSuccessToast('ExamTerm added');
             this.myForm.reset();
 
           }else if(response.status==208){
-            this.showToast('ExamTerm already exists',false);
+            this.showErrorToast('ExamTerm already exists');
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
         }
     });
@@ -79,7 +82,8 @@ export class ExamTermComponent implements OnInit {
   }
 
   deleteOne(id){
-    this.closeToast();
+    this.showLoadingToast('Deleting Exam Term');
+
     if(this.edit){
       this.myForm.reset();
       this.edit=false;
@@ -87,12 +91,12 @@ export class ExamTermComponent implements OnInit {
     this.examTermService.deleteOne(id).subscribe((res:any)=>{
       if(res.status == 200){
         this.examTerms = this.examTerms.filter(i=>i.id !== id);
-        this.showToast('Exam Term deleted',true)
+        this.showSuccessToast('Exam Term deleted')
       }
        else if(res.status==409){
-            this.showToast('ExamTerm cannot be deleted',false);
+            this.showErrorToast('ExamTerm cannot be deleted');
        }else{
-         this.showToast('Something went wrong.Please try again.',false);
+         this.showErrorToast('Something went wrong.Please try again.');
        }
     });
   } 
@@ -103,18 +107,29 @@ export class ExamTermComponent implements OnInit {
 
   }
 
-  showToast(message,val){
-    if(val)
-      this.successToast=true;
-    else
-      this.failureToast=true;
-
+  
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
     this.toastMessage=message;
   }
-
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
-  this.successToast=false;
-  this.failureToast=false;
+    this.successToast=false;
+    this.failureToast=false;
+    this.loadingToast=false;
   }
 
 }

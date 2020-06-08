@@ -3,12 +3,14 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedService } from '../services/shared.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable()
@@ -21,7 +23,6 @@ export class AuthInterceptor implements HttpInterceptor {
       this.school = data;
     });
     this.token = this.sharedService.getToken();
-    console.log("in const auth"+this.token);
   }
 
 
@@ -29,19 +30,24 @@ export class AuthInterceptor implements HttpInterceptor {
     try {
           let tkn= this.sharedService.getToken();
           this.token=  tkn!=null?tkn:'';
+          
+          let storedSchool =this.sharedService.getSchool();
+          this.school= storedSchool!=null?storedSchool:{id:0};
 
           if((this.token === '') && !request.url.includes("authenticate")){
             this.route.navigateByUrl('/login');
           }
+
+          console.log(request.url+'-----------------'+this.school.id);
           const headers  = request.headers.set('school',String(this.school.id)).set('Authorization',this.token);
           if(this.school.id!=0||request.url.includes("school")||request.url.includes("authenticate")){
             let outRequest = request.clone({headers:headers})
-            return next.handle(outRequest);
+            return next.handle(outRequest)
         }
         
-      } catch (error) {
+      } catch (error) { 
         console.log(error);
-    }
+    } 
     
   }
 }

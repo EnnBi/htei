@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { StorageMap } from '@ngx-pwa/local-storage';
 
 @Injectable({
@@ -7,11 +7,20 @@ import { StorageMap } from '@ngx-pwa/local-storage';
 })
 export class SharedService {
 
-  school = new Subject();
+  school = new BehaviorSubject<any>(1);
 
   constructor(private storage:StorageMap) { }
 
   getToken(){
    return localStorage.getItem('token');
   }
+
+  getSchool(){
+    return JSON.parse(localStorage.getItem('school'));
+  }
+
+  getSchools(){
+    return JSON.parse(localStorage.getItem('schools'));
+  }
+
 }

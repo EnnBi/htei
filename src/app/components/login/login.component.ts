@@ -23,6 +23,8 @@ export class LoginComponent implements OnInit {
   
   user:LoginUser;
   errorToast=false;
+  loadingToast:boolean=false;
+
   toastMessage='';
 
   ngOnInit(): void {
@@ -35,14 +37,17 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
       this.closeToast();
+      this.showLoadingToast('Logging in');
       this.authenticationService.authenticate(this.user).subscribe((data:any)=>{
         if(data==200){
           console.log('navigate to class')
               this.route.navigateByUrl('/class')
           }else if(data==401){
+              this.closeToast();
               this.showToast('Wrong Credentials');
           }
           else{
+            this.closeToast();
             this.showToast('Something went wrong.Please try again');
           }
       });
@@ -53,7 +58,13 @@ export class LoginComponent implements OnInit {
     this.errorToast=true;
   }
 
+  showLoadingToast(message){
+    this.loadingToast=true;
+    this.toastMessage=message;
+    }
+
   closeToast(){
     this.errorToast=false;
+    this.loadingToast=false;
   }
 }

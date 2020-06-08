@@ -19,17 +19,27 @@ export class TopBarComponent implements OnInit {
               private authService:AuthenticationService,private router:Router) { }
   
   ngOnInit(): void {
-      this.schoolService.fetchAll().subscribe((data:School[])=>{
-            this.schools=data;
-            this.school = this.schools[0];
-            this.sharedService.school.next(this.school);
-      });
+      this.school=new School();
+      this.school = this.sharedService.getSchool();
+      this.schools = this.sharedService.getSchools();
+      if(!this.school){
+        this.schoolService.fetchAll().subscribe((data:School[])=>{
+          this.schools=data;
+          this.school = this.schools[0];
+          localStorage.setItem('schools',JSON.stringify(this.schools));
+          localStorage.setItem('school',JSON.stringify(this.school));
+        });
+      }
+      console.log('firing next')
+      this.sharedService.school.next(this.school);      
   }
 
   schoolChanged(s){
         this.school = s;
+        console.log('setting storage and fecthing next')
+        localStorage.setItem('school',JSON.stringify(this.school));
         this.sharedService.school.next(s);
-        
+                
   }
 
   logout(){

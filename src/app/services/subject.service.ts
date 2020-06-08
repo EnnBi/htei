@@ -32,7 +32,7 @@ export class SubjectService {
   }
 
   fetchSubjectsOnClassId(id){
-    const req_url = this.url.SUBJECTS+"/class/"+id
+    const req_url = this.url.SUBJECTS+"class/"+id
     return this.http.get(req_url);
   }
 }

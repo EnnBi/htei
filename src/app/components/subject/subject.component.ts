@@ -25,44 +25,49 @@ export class SubjectComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
 
   ngOnInit(): void {
+    this.myForm?.reset()
+    this.showLoadingToast('Loading');
     this.subjectService.fetchAll().subscribe((data:Subject[])=>{
       this.subjects= data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
   onSubmitForm(){
     this.closeToast();
-    console.log('are we here ')
+    this.showLoadingToast('Saving Subject');
     this.subjectService.save(this.subject).subscribe(response=>{
       if(this.edit){
         if(response.status ==200){
           var i = this.subjects.findIndex(x=>x.id==response.body['id']);
           this.subjects[i] = <Subject>response.body;
           this.edit=false;
-          this.showToast('Subject updated',true);
           this.myForm.reset();
+          this.showSuccessToast('Subject updated');
 
         }else if(response.status==208){
-          this.showToast('Subject already exists',false);
+          this.showErrorToast('Subject already exists');
         }else{
-          this.showToast('Something went wrong.Please try again.',false);
+          this.showErrorToast('Something went wrong.Please try again.');
         }
       } 
       else
         {
           if(response.status==200){
             this.subjects.unshift(<Subject>response.body);
-            this.showToast('Subject added',true);
             this.myForm.reset();
-
+            this.showSuccessToast('Subject added');
           }else if(response.status==208){
-            this.showToast('Subject already exists',false);
+            this.showErrorToast('Subject already exists');
           }else{
-            this.showToast('Something went wrong.Please try again.',false);
+            this.showErrorToast('Something went wrong.Please try again.');
           }
         }
     });
@@ -74,7 +79,9 @@ export class SubjectComponent implements OnInit {
   }
 
   deleteOne(id){
+    
     this.closeToast();
+    this.showLoadingToast('Deleting Subject')
     if(this.edit){
       this.myForm.reset();
       this.edit=false;
@@ -82,12 +89,12 @@ export class SubjectComponent implements OnInit {
     this.subjectService.deleteOne(id).subscribe((res:any)=>{
       if(res.status == 200){
         this.subjects = this.subjects.filter(i=>i.id !== id);
-        this.showToast('Subject deleted',true)
+        this.showSuccessToast('Subject deleted')
       }
        else if(res.status==409){
-            this.showToast('Subject cannot be deleted',false);
+            this.showErrorToast('Subject cannot be deleted');
        }else{
-         this.showToast('Something went wrong.Please try again.',false);
+         this.showErrorToast('Something went wrong.Please try again.');
        }
     });
   } 
@@ -98,17 +105,27 @@ export class SubjectComponent implements OnInit {
 
   }
 
-  showToast(message,val){
-    if(val)
-      this.successToast=true;
-    else
-      this.failureToast=true;
-
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
     this.toastMessage=message;
   }
-
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
-  this.successToast=false;
-  this.failureToast=false;
+    this.successToast=false;
+    this.failureToast=false;
+    this.loadingToast=false;
   }
 }

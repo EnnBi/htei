@@ -10,6 +10,7 @@ import { SectionService } from 'src/app/services/section.service';
 import { PaperService } from 'src/app/services/paper.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { NgForm, NgModelGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export class Question{
   id:number;
@@ -60,7 +61,7 @@ export class PaperComponent implements OnInit {
   successToast:boolean=false;
   errorToast:boolean=false;
   loadingToast:boolean=false;
-  toastMessage:string='';
+  toastMessage:string=''; 
   searchTxt:string='';
   checkPaperModalShow=false;
 
@@ -73,42 +74,65 @@ export class PaperComponent implements OnInit {
     this.sharedService.school.subscribe((data:any)=>{
       this.initData();
     });
-    this.initData();
   }
 
   initData(){
     this.paper={id:0,claass:{id:0,name:''},subject:new Subject(),questions:[],section:new Section,term:new ExamTerm()};
-    this.resetQuestionForm();
-    this.classService.fetchClassesOfSchool().subscribe((data:any)=>{
+    this.showLoadingToast('Loading')
+    this.classService.fetchAll().subscribe((data:any)=>{
           this.classes=data;
+          this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.examTermService.fetchAll().subscribe((data:any)=>{
         this.terms=data;
+        this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.paperService.fetchAll().subscribe((data:any)=>{
         this.papers = data;
+        this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
+    this.resetQuestionForm();
   }
 
   onClassChange(claass){
       this.subjects=[]
       this.sections=[]
+      this.showLoadingToast('Loading');
+      this.resetQuestionForm();
       this.sectionService.fetchSectionOnClassId(claass.id).subscribe((data:any)=>{
         this.sections = data;
+        this.closeToast();
+      },(err:any)=>{
+        this.showErrorToast('Error fetching sections');
       });
       this.subjectService.fetchSubjectsOnClassId(claass.id).subscribe((data:any)=>{
         this.subjects=data;
+        this.closeToast();
+      },(err:any)=>{
+        this.showErrorToast('Error fetching subjects');
       });
   }
   
 
   onSectionChange(){
+    this.showLoadingToast('Loading');
+    this.resetQuestionForm();
     this.subjectService.fetchSubjectsOnClassIdAndSectionId(this.paper.claass.id,this.paper.section.id).subscribe((data:any)=>{
         this.subjects = data;
+        this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Error fetching subjects');
     });
   }
 
   onSubmitForm(){
+    this.showLoadingToast('Loading');
     this.paper.questions = this.questions;
     this.paperService.save(this.paper).subscribe((response:any)=>{
           if(this.edit){
@@ -149,29 +173,53 @@ export class PaperComponent implements OnInit {
       this.paper = this.papers.find(p=>p.id==id);
       this.sectionService.fetchSectionOnClassId(this.paper.claass.id).subscribe((data:any)=>{
         this.sections = data;
+        this.closeToast();
+      },(err:any)=>{
+        this.showErrorToast('Error fetching sections');
       });
       if(this.paper.section.id){
         this.subjectService.fetchSubjectsOnClassIdAndSectionId(this.paper.claass.id,this.paper.section.id).subscribe((data:any)=>{
           this.subjects = data;
+          this.closeToast();
+      },(err:any)=>{
+          this.showErrorToast('Error fetching subjects');
         });
       }
       else{
         this.subjectService.fetchSubjectsOnClassId(this.paper.claass.id).subscribe((data:any)=>{
           this.subjects=data;
+          this.closeToast();
+        },(err:any)=>{
+          this.showErrorToast('Error fetching subjects');
         });
       }     
       this.paperService.fetchQuestionsOfPaper(id).subscribe((data:any)=>{
         this.questions=data;
         this.question=this.questions[0];
         this.questionIndex=0;
+        this.closeToast();
+      },(err:any)=>{
+        this.showErrorToast('Error fetching papers');
       });
-    this.closeToast();
 
   } 
 
   deletePaper(id){
-      console.log(id+"--delete me")
-  }
+    this.showLoadingToast('Deleting Exam Date');
+      this.paperService.deleteOne(id).subscribe((response:any)=>{
+            if(response.status == 200) {
+              this.papers = this.papers.filter(i=>i.id !== id);  
+              this.closeToast();
+            } 
+            else if(response.status==208) 
+               this.showErrorToast('Exam Date cannot be delete')
+            else 
+                this.showErrorToast('Exam Date cannot be delete')
+      },(err:HttpErrorResponse)=>{
+        this.showErrorToast('Something went wrong,Please try again');
+      });
+    }
+  
   addQuestion(index){
    
     if(index==this.questions.length){
@@ -221,26 +269,31 @@ export class PaperComponent implements OnInit {
   }
 
   selectOnId(item1,item2){
-    return item1.id == item2.id;
+    return item1?.id == item2?.id;
   }
 
+
+
   resetForm(){
-    this.class.classSubjectTeachers=[]
+    this.questions=[];
     this.myForm.reset();
     this.edit=false;
   }
 
   showSuccessToast(message){
+        this.closeToast();
         this.successToast=true;
         this.toastMessage=message;
   }
 
   showErrorToast(message){
+    this.closeToast();
       this.errorToast=true;
       this.toastMessage=message;
   }
 
   showLoadingToast(message){
+    this.closeToast();
     this.loadingToast=true;
     this.toastMessage=message;
   }
@@ -254,11 +307,25 @@ export class PaperComponent implements OnInit {
   }
 
   resetQuestionForm(){
+    this.qstnModelGroup?.reset()
     this.questions=[]
     this.questionIndex=0;
-    this.question=new Question;
+    this.question= new Question();
     this.questions.push(this.question);
   }
 
+  onCancel(index){
+    this.qstnModelGroup.reset()
+    this.questions[index]=new Question();
+  }
+  /* this.question= {
+    id :0,
+    question : '',
+    optionA :'',
+    optionB:'',
+    optionC:'',
+    optionD:'',
+    correctAnswer:''
+  } */
 
 }

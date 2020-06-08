@@ -53,3 +53,8 @@ input.ng-invalid.ng-touched {
     width: 8px;
     background-color: #F5F5F5;
 }
+
+.tablediv {
+    scrollbar-width: thin;
+    scrollbar-color: #2348b6 #F5F5F5;
+}

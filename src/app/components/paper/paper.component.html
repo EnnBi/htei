@@ -58,9 +58,9 @@
                         </div>
                         <div class="text-right mt-5">
                             <h2 class="font-medium text-base mr-auto " style="float: left;">
-                                Total Questions:{{questions.length}}
+                                Total Questions:{{questions?.length}}
                             </h2>
-                            <button type="button" class="button   bg-theme-6 text-white mr-1" (click)="deleteQuestion(questionIndex)" [disabled]="questionIndex <= 0 && questions.length==1">Delete Question</button>
+                            <button type="button" class="button   bg-theme-6 text-white mr-1" (click)="deleteQuestion(questionIndex)" [disabled]="(questionIndex <= 0 && questions.length==1) || !modelGroup.valid">Delete Question</button>
                             <button type="button" class="button bg-theme-1 text-white" (click)="addQuestion(questionIndex+1)" [disabled]="!modelGroup.valid">Add Question</button>
                         </div>
                         <div class="p-5" ngModelGroup="modelGroup" #modelGroup="ngModelGroup" style="padding-left: 0px;padding-right: 0px;">
@@ -128,6 +128,7 @@
 
                     <div class="text-right mt-5">
                         <div style="display: inline;">
+                            <button type="button" class="button w-24 border text-gray-700 mr-1" (click)="onCancel(questionIndex)">Cancel</button>
                             <a href="javascript:;" data-toggle="modal" data-target="#myModal" class="button inline-block bg-theme-1 text-white">Check Paper</a>
                         </div>
 

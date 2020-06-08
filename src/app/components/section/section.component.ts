@@ -31,82 +31,99 @@ export class SectionComponent implements OnInit {
   edit:boolean=false;
   successToast:boolean=false;
   failureToast:boolean=false;
+  loadingToast:boolean=false;
   toastMessage:string='';
 
   initData(){
+    this.myForm?.reset()
+    this.showLoadingToast('Loading');
     this.sectionService.fetchAllSections().subscribe((data:Section[])=>{
       this.sections = data;
+      this.closeToast();
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   }
 
   ngOnInit(): void {
-    console.log('i m in section')
-    this.showToast('Loading',true);
     this.sharedService.school.subscribe((data:School)=>{
-      this.myForm.reset()
         this.initData();
     });
-    this.initData();
   }
 
   onSubmitForm(){
+    this.showLoadingToast('Saving Section');
     this.sectionService.saveSection(this.section).subscribe(data=>{
+      this.closeToast();
       if(this.edit){
         var i = this.sections.findIndex(x=>x.id==data.id);
         this.sections[i] = data;
         this.edit=false;
-        this.showToast('Section updated',true);
-      }
-      else
+        this.showSuccessToast('Section updated');
+
+      } 
+      else 
         {
           this.sections.unshift(data);
-          this.showToast('Section added',true);
+          this.showSuccessToast('Section added');
         }
+        
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
     this.myForm.reset();
   }
 
   fetchOne(id){
-    /* this.sectionService.fetchOne(id).subscribe((data)=>{
-      this.section = data;
-      this.edit=true;
-    }); */
     this.section = this.sections.find(o=> o.id== +id);
     this.edit=true;
   }
 
   deleteOne(id){
-      console.log(this.myForm.value['id']);
+    this.showLoadingToast('Deleting Section');
     if(this.edit){
       this.myForm.reset();
       this.edit=false;
     }
 
     this.sectionService.deleteOne(id).subscribe((res:any)=>{
+      this.closeToast();
       if(res.status == 200){
         this.sections = this.sections.filter(i=>i.id !== id);
-        this.showToast('Section deleted',true)
-        console.log(this.sections);
+        this.showSuccessToast('Section deleted',)
       }
        else {
-            this.showToast('Section cannot be deleted',false);
+            this.showErrorToast('Section cannot be deleted');
        }
+    },(err:any)=>{
+      this.showErrorToast('Something went wrong,Please try again');
     });
   } 
 
-  showToast(message,val){
-    console.log(' it shud now sow yoast')
-        if(val)
-          this.successToast=true;
-        else
-          this.failureToast=true;
-
-        this.toastMessage=message;
+  showSuccessToast(message){
+    this.closeToast()
+    this.successToast=true;
+    this.toastMessage=message;
   }
-
+  
+  showErrorToast(message){
+  this.closeToast()
+  this.failureToast=true;
+  this.toastMessage=message;
+  }
+  
+  showLoadingToast(message){
+  this.closeToast()
+  this.loadingToast=true;
+  this.toastMessage=message;
+  }
+  
   closeToast(){
-    console.log('closin gtoast')
     this.successToast=false;
     this.failureToast=false;
+    this.loadingToast=false;
   }
+
 }
+
+

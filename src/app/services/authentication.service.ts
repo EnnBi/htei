@@ -29,5 +29,7 @@ export class AuthenticationService {
    logout(){
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
+    localStorage.removeItem('school');
+    localStorage.removeItem('schools');
    }
 }

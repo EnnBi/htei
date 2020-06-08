@@ -29,7 +29,6 @@ export class SchoolComponent implements OnInit {
   searchTxt:string='';
 
   ngOnInit(): void {
-    console.log('i m in')
     this.schoolService.fetchAll().subscribe((data:School[])=>{
       this.schools= data;
     });
