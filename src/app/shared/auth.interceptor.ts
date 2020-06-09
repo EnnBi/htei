@@ -4,13 +4,15 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpErrorResponse
+  HttpErrorResponse,
+  HttpResponse
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SharedService } from '../services/shared.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import {of} from 'rxjs';
 
 
 @Injectable()
@@ -32,6 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.token=  tkn!=null?tkn:'';
           
           let storedSchool =this.sharedService.getSchool();
+          console.log(storedSchool+"-----stored school")
           this.school= storedSchool!=null?storedSchool:{id:0};
 
           if((this.token === '') && !request.url.includes("authenticate")){
@@ -43,6 +46,10 @@ export class AuthInterceptor implements HttpInterceptor {
           if(this.school.id!=0||request.url.includes("school")||request.url.includes("authenticate")){
             let outRequest = request.clone({headers:headers})
             return next.handle(outRequest)
+        }else{
+          return of(new HttpResponse({
+            status:200
+          }));
         }
         
       } catch (error) { 

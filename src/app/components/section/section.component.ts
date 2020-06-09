@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { SectionService } from 'src/app/services/section.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -17,7 +17,7 @@ export class Section{
 })
 
 
-export class SectionComponent implements OnInit {
+export class SectionComponent implements OnInit,OnDestroy {
   
   constructor(private sectionService:SectionService,private sharedService:SharedService) { }
   
@@ -33,6 +33,7 @@ export class SectionComponent implements OnInit {
   failureToast:boolean=false;
   loadingToast:boolean=false;
   toastMessage:string='';
+  subscription:any;
 
   initData(){
     this.myForm?.reset()
@@ -46,7 +47,7 @@ export class SectionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sharedService.school.subscribe((data:School)=>{
+   this.subscription =  this.sharedService.school.subscribe((data:School)=>{
         this.initData();
     });
   }
@@ -124,6 +125,9 @@ export class SectionComponent implements OnInit {
     this.loadingToast=false;
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
 
 

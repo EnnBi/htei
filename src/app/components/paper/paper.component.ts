@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Class } from '../class/class.component';
 import { Subject } from '../subject/subject.component';
 import { Section } from '../section/section.component';
@@ -36,7 +36,7 @@ export class Paper{
   templateUrl: './paper.component.html',
   styleUrls: ['./paper.component.css']
 })
-export class PaperComponent implements OnInit {
+export class PaperComponent implements OnInit,OnDestroy{
 
   @ViewChild('myForm') myForm:NgForm;
   @ViewChild('modelGroup') qstnModelGroup:NgModelGroup;
@@ -65,15 +65,17 @@ export class PaperComponent implements OnInit {
   searchTxt:string='';
   checkPaperModalShow=false;
 
+  subscription:any;
 
   constructor(private subjectService:SubjectService,private examTermService:ExamTermService,
     private classService:ClassService,private sectionService:SectionService,
     private paperService:PaperService,private sharedService:SharedService) { }
 
   ngOnInit(): void {
-    this.sharedService.school.subscribe((data:any)=>{
+   this.subscription = this.sharedService.school.subscribe((data:any)=>{
       this.initData();
     });
+
   }
 
   initData(){
@@ -318,14 +320,8 @@ export class PaperComponent implements OnInit {
     this.qstnModelGroup.reset()
     this.questions[index]=new Question();
   }
-  /* this.question= {
-    id :0,
-    question : '',
-    optionA :'',
-    optionB:'',
-    optionC:'',
-    optionD:'',
-    correctAnswer:''
-  } */
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
 }

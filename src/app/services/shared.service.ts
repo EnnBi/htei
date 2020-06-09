@@ -7,7 +7,7 @@ import { StorageMap } from '@ngx-pwa/local-storage';
 })
 export class SharedService {
 
-  school = new BehaviorSubject<any>(1);
+  school = new BehaviorSubject<any>(1);//Subject<any>();
 
   constructor(private storage:StorageMap) { }
 

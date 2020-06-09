@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { Section } from '../section/section.component';
@@ -29,7 +29,7 @@ export class Class{
   styleUrls: ['./class.component.css']
 })
 
-export class ClassComponent implements OnInit {
+export class ClassComponent implements OnInit,OnDestroy {
   @ViewChild('myForm') myForm:NgForm;
 
 
@@ -43,6 +43,7 @@ export class ClassComponent implements OnInit {
   successToast:boolean=false;
   failureToast:boolean=false;
   loadingToast:boolean=false;
+  subscription:any;
   toastMessage:string='';
   searchTxt:string='';
   constructor(private classService:ClassService,private sectionService:SectionService,
@@ -52,7 +53,7 @@ export class ClassComponent implements OnInit {
     this.showLoadingToast('Loading.Please wait')
     this.class=this.initialize();
     this.myForm?.reset()
-    this.classService.fetchAll().subscribe((data:any)=>{
+    this.classService.fetchClassesWithSections().subscribe((data:any)=>{
       this.classes= data;
       this.closeToast();
     },(err:any)=>{
@@ -68,7 +69,8 @@ export class ClassComponent implements OnInit {
   
   ngOnInit(): void {
     this.class=this.initialize();
-    this.sharedService.school.subscribe((data:School)=>{
+    this.subscription = this.sharedService.school.subscribe((data:School)=>{
+      if(this.sharedService.getSchool)
         this.initData();
     });  
   } 
@@ -177,5 +179,10 @@ this.toastMessage=message;
         classSubjectTeachers:[]
     }
       return c;
+  }
+
+  ngOnDestroy() {
+    if(this.subscription)
+      this.subscription.unsubscribe();
   }
 }

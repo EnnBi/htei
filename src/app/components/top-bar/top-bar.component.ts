@@ -22,16 +22,18 @@ export class TopBarComponent implements OnInit {
       this.school=new School();
       this.school = this.sharedService.getSchool();
       this.schools = this.sharedService.getSchools();
+      console.error('we are in init');
       if(!this.school){
         this.schoolService.fetchAll().subscribe((data:School[])=>{
           this.schools=data;
           this.school = this.schools[0];
           localStorage.setItem('schools',JSON.stringify(this.schools));
-          localStorage.setItem('school',JSON.stringify(this.school));
+          localStorage.setItem('school',JSON.stringify(this.school));          
+          this.sharedService.school.next(this.school);      
         });
+      }else{
+        this.sharedService.school.next(this.school); 
       }
-      console.log('firing next')
-      this.sharedService.school.next(this.school);      
   }
 
   schoolChanged(s){
@@ -46,4 +48,6 @@ export class TopBarComponent implements OnInit {
     this.authService.logout();
     this.router.navigateByUrl('/login');
   }
+
+  
 }

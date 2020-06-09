@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ClassService } from 'src/app/services/class.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ExamDateService } from 'src/app/services/exam-date.service';
@@ -27,7 +27,7 @@ export class ExamDate{
   templateUrl: './exam-date.component.html',
   styleUrls: ['./exam-date.component.css']
 })
-export class ExamDateComponent implements OnInit {
+export class ExamDateComponent implements OnInit,OnDestroy {
   
   @ViewChild('myForm') myForm:NgForm;
 
@@ -52,9 +52,10 @@ export class ExamDateComponent implements OnInit {
   toastMessage:string='';
   searchTxt:string='';
 
+  subscription:any;
 
   ngOnInit(): void {
-    this.sharedService.school.subscribe((data:any)=>{
+   this.subscription = this.sharedService.school.subscribe((data:any)=>{
       this.initData();
     });
   }
@@ -236,4 +237,7 @@ export class ExamDateComponent implements OnInit {
     this.loadingToast=false;
   }
   
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

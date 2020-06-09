@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Subject } from '../subject/subject.component';
 import { Teacher } from '../teacher/teacher.component';
 import { SubjectService } from 'src/app/services/subject.service';
@@ -24,7 +24,7 @@ export class ClassSubjectTeacher{
   templateUrl: './subject-teacher.component.html',
   styleUrls: ['./subject-teacher.component.css']
 })
-export class SubjectTeacherComponent implements OnInit {
+export class SubjectTeacherComponent implements OnInit,OnDestroy {
   @ViewChild('myForm') myForm:NgForm;
 
   subjects:Subject[]=[];
@@ -42,6 +42,8 @@ export class SubjectTeacherComponent implements OnInit {
   searchTxt:string='';
   cst:ClassSubjectTeacher;  
 
+  subscription:any;
+
   constructor(private subjectService:SubjectService,private teacherService:TeacherService,
               private classService:ClassService,private sectionService:SectionService,
               private cstService:SubjectTeacherService,private sharedService:SharedService) { }
@@ -53,7 +55,7 @@ export class SubjectTeacherComponent implements OnInit {
     this.showLoadingToast('Loading....')
     this.info=false
     this.claass={id:0,name:'',sections:[],classSubjectTeachers:[]};
-    this.seection={id:0,name:''};
+    this.seection={id:0,name:''}; 
      this.csts=[];
     this.classService.fetchAll().subscribe((data:any)=>{
       this.classes=data;
@@ -64,7 +66,7 @@ export class SubjectTeacherComponent implements OnInit {
   }
 
   ngOnInit(): void {
-     this.sharedService.school.subscribe((data:any)=>{
+     this.subscription = this.sharedService.school.subscribe((data:any)=>{
        this.initData();
      });
 
@@ -180,5 +182,9 @@ showErrorToast(message){
       this.successToast=false;
       this.failureToast=false;
       this.loadingToast=false;
+    }
+
+    ngOnDestroy() {
+      this.subscription.unsubscribe();
     }
 }

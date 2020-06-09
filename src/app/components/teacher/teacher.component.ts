@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { StudentService } from 'src/app/services/student.service';
 import { ClassService } from 'src/app/services/class.service';
@@ -21,7 +21,7 @@ export class Teacher{
   templateUrl: './teacher.component.html',
   styleUrls: ['./teacher.component.css']
 })
-export class TeacherComponent implements OnInit {
+export class TeacherComponent implements OnInit,OnDestroy {
 
   @ViewChild('myForm') myForm:NgForm;
 
@@ -36,6 +36,9 @@ export class TeacherComponent implements OnInit {
   loadingToast:boolean=false;
   toastMessage:string='';
   searchTxt:string='';
+
+  subscription:any;
+
   constructor(private teacherService:TeacherService,private schoolService:SchoolService,
               private sharedService:SharedService) { }
 
@@ -59,11 +62,10 @@ export class TeacherComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentSchool=this.sharedService.getSchool();
-    this.sharedService.school.subscribe((data:any)=>{
+    this.subscription = this.sharedService.school.subscribe((data:any)=>{
       this.currentSchool=data;
       this.initData();
     })
-    this.initData();
   }
 
   onSubmitForm(){
@@ -159,5 +161,7 @@ export class TeacherComponent implements OnInit {
     this.failureToast=false;
     this.loadingToast=false;
   }
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

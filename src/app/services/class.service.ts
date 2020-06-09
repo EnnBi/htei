@@ -35,8 +35,8 @@ export class ClassService {
     return this.http.get(url,{'observe':'response'});
   }
 
-  fetchClassesOfSchool(){
-    const url = this.url.CLASSES+"school"
+  fetchClassesWithSections(){
+    const url = this.url.CLASSES+"sections"
     return this.http.get(url);
   }
 }

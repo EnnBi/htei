@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { SubjectService } from 'src/app/services/subject.service';
 import { NgForm } from '@angular/forms';
+import { SharedService } from 'src/app/services/shared.service';
 
 export class Subject{
   id:number;
@@ -12,9 +13,9 @@ export class Subject{
   templateUrl: './subject.component.html',
   styleUrls: ['./subject.component.css']
 })
-export class SubjectComponent implements OnInit {
+export class SubjectComponent implements OnInit,OnDestroy {
 
-  constructor(private subjectService:SubjectService) { }
+  constructor(private subjectService:SubjectService,private sharedService:SharedService) { }
   @ViewChild('myForm') myForm:NgForm;
 
   subjects:Subject[] = [];
@@ -29,7 +30,15 @@ export class SubjectComponent implements OnInit {
   toastMessage:string='';
   searchTxt:string='';
 
+  subscription:any;
+
   ngOnInit(): void {
+    this.subscription = this.sharedService.school.subscribe((data:any)=>{
+      this.onInit();
+    });
+  }
+
+  onInit(){
     this.myForm?.reset()
     this.showLoadingToast('Loading');
     this.subjectService.fetchAll().subscribe((data:Subject[])=>{
@@ -127,5 +136,9 @@ export class SubjectComponent implements OnInit {
     this.successToast=false;
     this.failureToast=false;
     this.loadingToast=false;
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

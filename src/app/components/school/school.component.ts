@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { SchoolService } from 'src/app/services/school.service';
 import { NgForm } from '@angular/forms';
 

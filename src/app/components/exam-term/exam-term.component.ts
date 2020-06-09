@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ExamTermService } from 'src/app/services/exam-term.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -14,7 +14,7 @@ export class ExamTerm{
   templateUrl: './exam-term.component.html',
   styleUrls: ['./exam-term.component.css']
 })
-export class ExamTermComponent implements OnInit {
+export class ExamTermComponent implements OnInit,OnDestroy {
 
   constructor(private examTermService:ExamTermService,private sharedService:SharedService) { }
   @ViewChild('myForm') myForm:NgForm;
@@ -28,8 +28,10 @@ export class ExamTermComponent implements OnInit {
   toastMessage:string='';
   searchTxt:string='';
 
+  subscription:any;
+
   ngOnInit(): void {
-    this.sharedService.school.subscribe((data:any)=>{
+    this.subscription = this.sharedService.school.subscribe((data:any)=>{
         this.initData();
     });
   }
@@ -132,4 +134,7 @@ export class ExamTermComponent implements OnInit {
     this.loadingToast=false;
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
